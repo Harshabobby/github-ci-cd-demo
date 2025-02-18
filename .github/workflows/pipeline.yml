@@ -21,9 +21,6 @@ jobs:
       - name: 📦 Install Dependencies
         run: npm install
 
-      - name: 🏗️ Build Project
-        run: echo "Build Successful!"
-
   test:
     runs-on: ubuntu-latest
     needs: build
@@ -34,12 +31,18 @@ jobs:
       - name: 🔬 Run Tests
         run: npm test
 
-  deploy:
+  sonar_scan:
     runs-on: ubuntu-latest
     needs: test
     steps:
       - name: 🚀 Checkout Code
         uses: actions/checkout@v3
 
-      - name: 🚀 Deploy to Server (Example)
-        run: echo "Deploying to production..."
+      - name: 🔍 SonarQube Analysis
+        run: |
+          sonar-scanner \
+            -Dsonar.organization=YOUR_SONARCLOUD_ORG \
+            -Dsonar.projectKey=YOUR_PROJECT_KEY \
+            -Dsonar.sources=. \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
