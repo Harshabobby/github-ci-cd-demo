@@ -22,4 +22,49 @@ jobs:
         run: npm install
 
   test:
-    runs-on: ubu
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: 🚀 Checkout Code
+        uses: actions/checkout@v3
+
+      - name: 📦 Install Dependencies
+        run: npm install
+
+      - name: 🔧 Fix Jest Permission Issue
+        run: chmod +x node_modules/.bin/jest
+
+      - name: 🔬 Run Tests
+        run: npx jest
+
+  security_scan:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: 🚀 Checkout Code
+        uses: actions/checkout@v3
+
+      - name: 📦 Install Dependencies
+        run: npm install
+
+      - name: 🔎 Run SonarQube Analysis
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          npm install -g sonarqube-scanner
+          sonar-scanner \
+            -Dsonar.projectKey=github-ci-cd-demo \
+            -Dsonar.organization=my-org \
+            -Dsonar.sources=. \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.login=$SONAR_TOKEN
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: security_scan
+    steps:
+      - name: 🚀 Checkout Code
+        uses: actions/checkout@v3
+
+      - name: 🚀 Deploy Application
+        run: echo "Deployment process here..."
