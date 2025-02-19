@@ -53,7 +53,7 @@ jobs:
         run: |
           npm install -g sonarqube-scanner
           sonar-scanner \
-            -Dsonar.projectKey=github-ci-cd-demo \
+            -Dsonar.projectKey=harshabobby_github-ci-cd-demo \
             -Dsonar.organization=harshabobby \
             -Dsonar.sources=. \
             -Dsonar.host.url=https://sonarcloud.io \
